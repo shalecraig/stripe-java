@@ -73,12 +73,23 @@ public class Account extends APIResource {
 		return retrieve((RequestOptions) null);
 	}
 
+	/**
+	 * In order to preserve backwards-compatibility, this method does two things.
+   * If the parameter looks like an API key (starts with sk_), retrieve the
+   * account resource with no ID parameter set. Otherwise, use the String
+   * parameter as the account ID.
+	 */
 	@Deprecated
-	public static Account retrieve(String apiKey)
+	public static Account retrieve(String apiKeyOrAccountId)
 			throws AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
-		return retrieve(RequestOptions.builder().setApiKey(apiKey).build());
+		if (null == apiKeyOrAccountId || apiKeyOrAccountId.startsWith("sk_")) {
+			return retrieve(RequestOptions.builder().setApiKey(apiKeyOrAccountId).build());
+		} else {
+			return retrieve(apiKeyOrAccountId, (RequestOptions) null);
+		}
 	}
+
 	public static Account retrieve(RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
@@ -88,5 +99,11 @@ public class Account extends APIResource {
 			null,
 			Account.class,
 			options);
+	}
+
+	public static Account retrieve(String id, RequestOptions options)
+			throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		return request(RequestMethod.GET, instanceURL(Account.class, id), null, Account.class, options);
 	}
 }
