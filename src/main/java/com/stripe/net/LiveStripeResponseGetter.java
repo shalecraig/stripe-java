@@ -221,7 +221,7 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
 		return conn;
 	}
 
-	private static String createQuery(Map<String, Object> params)
+	static String createQuery(Map<String, Object> params)
 			throws UnsupportedEncodingException, InvalidRequestException {
 		Map<String, String> flatParams = flattenParams(params);
 		StringBuilder queryStringBuffer = new StringBuilder();
@@ -234,6 +234,7 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
 		}
 		return queryStringBuffer.toString();
 	}
+
 
 	private static Map<String, String> flattenParams(Map<String, Object> params)
 			throws InvalidRequestException {
