@@ -73,6 +73,18 @@ public class Account extends APIResource {
 		return legalEntity;
 	}
 
+	public static Account create(Map<String, Object> params)
+			throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		return create(params, (RequestOptions) null);
+	}
+
+	public static Account create(Map<String, Object> params, RequestOptions options)
+			throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		return request(RequestMethod.POST, classURL(Account.class), params, Account.class, options);
+	}
+
 	public static Account retrieve()
 			throws AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
