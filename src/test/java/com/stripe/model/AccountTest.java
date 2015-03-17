@@ -70,16 +70,12 @@ public class AccountTest extends BaseStripeTest {
 		assertEquals("US/Pacific", acc.getTimezone());
 		assertEquals("Stripe.com", acc.getDisplayName());
 
-		Map<String, Object> verification = new HashMap<String, Object>();
 		List<String> fieldsNeeded = new LinkedList<String>();
 		fieldsNeeded.add("foo");
 		fieldsNeeded.add("bar");
-		verification.put("fields_needed", fieldsNeeded);
-		/* 123 is a float due to GSON decoding */
-		verification.put("due_by", 123.0);
-		verification.put("contacted", false);
-
-		assertEquals(verification, acc.getVerification());
+		assertEquals(fieldsNeeded, acc.getVerification().getFieldsNeeded());
+		assertEquals(new Long(123), acc.getVerification().getDueBy());
+		assertEquals(false, acc.getVerification().getContacted());
 	}
 
 	@Test
