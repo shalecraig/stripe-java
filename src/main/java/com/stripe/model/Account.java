@@ -23,7 +23,7 @@ public class Account extends APIResource {
 	String country;
 	String timezone;
 	String displayName;
-	Verification verification;
+	LegalEntity legalEntity;
 
 	public String getId() {
 		return id;
@@ -69,8 +69,8 @@ public class Account extends APIResource {
 		return displayName;
 	}
 
-	public Verification getVerification() {
-		return verification;
+	public LegalEntity getLegalEntity() {
+		return legalEntity;
 	}
 
 	public static Account retrieve()
@@ -112,4 +112,5 @@ public class Account extends APIResource {
 			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.GET, instanceURL(Account.class, id), null, Account.class, options);
 	}
+
 }

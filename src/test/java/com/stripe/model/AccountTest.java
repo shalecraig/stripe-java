@@ -34,15 +34,7 @@ public class AccountTest extends BaseStripeTest {
 		"  \"business_name\": \"Stripe.com\"," +
 		"  \"business_url\": null," +
 		"  \"support_phone\": null," +
-		"  \"managed\": null," +
-		"  \"verification\": {" +
-		"    \"fields_needed\": [" +
-		"      \"foo\"," +
-		"      \"bar\"" +
-		"    ]," +
-		"    \"due_by\": 123," +
-		"    \"contacted\": false" +
-    "  }" +
+		"  \"managed\": null" +
 		"}";
 
 	@Test
@@ -69,13 +61,6 @@ public class AccountTest extends BaseStripeTest {
 		assertEquals("US", acc.getCountry());
 		assertEquals("US/Pacific", acc.getTimezone());
 		assertEquals("Stripe.com", acc.getDisplayName());
-
-		List<String> fieldsNeeded = new LinkedList<String>();
-		fieldsNeeded.add("foo");
-		fieldsNeeded.add("bar");
-		assertEquals(fieldsNeeded, acc.getVerification().getFieldsNeeded());
-		assertEquals(new Long(123), acc.getVerification().getDueBy());
-		assertEquals(false, acc.getVerification().getContacted());
 	}
 
 	@Test
