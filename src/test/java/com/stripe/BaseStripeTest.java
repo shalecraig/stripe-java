@@ -16,20 +16,48 @@ import java.util.Map;
 import static org.mockito.Mockito.*;
 
 public class BaseStripeTest {
-	protected static Map<String, Object> params;
+	protected static Map<String, Object> defaultParams;
 	protected static RequestOptionsBuilder requestOptionsBuilder;
 
 	public static final StripeResponseGetter networkMock = mock(StripeResponseGetter.class);
 
-	public static <T> void verifyGet(String url, Map<String, Object> params, Class<T> clazz) throws StripeException {
-		verifyRequest(APIResource.RequestMethod.GET, url, params, clazz, APIResource.RequestType.NORMAL, requestOptionsBuilder.build());
+	public static <T> void verifyGet(
+			Class<T> clazz,
+			String url) throws StripeException {
+		verifyRequest(APIResource.RequestMethod.GET, clazz, url, null,
+				APIResource.RequestType.NORMAL, RequestOptions.getDefault());
+	}
+
+	public static <T> void verifyGet(
+			Class<T> clazz,
+			String url,
+			Map<String, Object> params) throws StripeException {
+		verifyRequest(APIResource.RequestMethod.GET, clazz, url, params,
+				APIResource.RequestType.NORMAL, RequestOptions.getDefault());
+	}
+
+	public static <T> void verifyGet(
+			Class<T> clazz,
+			String url,
+			RequestOptions requestOptions) throws StripeException {
+		verifyRequest(APIResource.RequestMethod.GET, clazz, url, null,
+				APIResource.RequestType.NORMAL, requestOptions);
+	}
+
+	public static <T> void verifyGet(
+			Class<T> clazz,
+			String url,
+			Map<String, Object> params,
+			RequestOptions requestOptions) throws StripeException {
+		verifyRequest(APIResource.RequestMethod.GET, clazz, url, params,
+				APIResource.RequestType.NORMAL, requestOptions);
 	}
 
 	public static <T> void verifyRequest(
 			APIResource.RequestMethod method,
+			Class<T> clazz,
 			String url,
 			Map<String, Object> params,
-			Class<T> clazz,
 			APIResource.RequestType requestType,
 			RequestOptions options) throws StripeException {
 		verify(networkMock).request(
@@ -108,7 +136,7 @@ public class BaseStripeTest {
 
 	@Before
 	public void before() {
-		params = new HashMap<String, Object>();
+		defaultParams = new HashMap<String, Object>();
 		requestOptionsBuilder = new RequestOptionsBuilder();
 	}
 }
