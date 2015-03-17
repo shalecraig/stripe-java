@@ -2,6 +2,7 @@ package com.stripe;
 
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
+import com.stripe.net.APIResource;
 import com.stripe.net.RequestOptions;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class AccountTest extends BaseStripeTest {
-	static String accountResponse =
+	static String accountHash =
 		"{" +
 		"  \"id\": \"acct_1032D82eZvKYlo2C\"," +
 		"  \"email\": \"site@stripe.com\"," +
@@ -25,9 +26,15 @@ public class AccountTest extends BaseStripeTest {
 		"  \"charges_enabled\": false," +
 		"  \"transfers_enabled\": false," +
 		"  \"currencies_supported\": [" +
-		"  	\"usd\"," +
-		"  	\"aud\"" +
+		"    \"usd\"," +
+		"    \"aud\"" +
 		"  ]," +
+		"  \"legal_entity\": {" +
+		"    \"type\": \"company\"," +
+		"    \"address\": {" +
+		"      \"city\": \"San Francisco\"" +
+		"    }" +
+		"  }," +
 		"  \"default_currency\": \"usd\"," +
 		"  \"country\": \"US\"," +
 		"  \"object\": \"account\"," +
@@ -38,12 +45,8 @@ public class AccountTest extends BaseStripeTest {
 		"}";
 
 	@Test
-	public void testRetrieve() throws StripeException {
-		stubNetwork(Account.class, accountResponse);
-		Account acc = Account.retrieve();
-
-		verifyGet(Account.class, "https://api.stripe.com/v1/account");
-		verifyNoMoreInteractions(networkMock);
+	public void testDeserialize() throws StripeException {
+		Account acc = APIResource.GSON.fromJson(accountHash, Account.class);
 
 		assertEquals("acct_1032D82eZvKYlo2C", acc.getId());
 		assertEquals(false, acc.getChargesEnabled());
@@ -55,12 +58,23 @@ public class AccountTest extends BaseStripeTest {
 		currenciesSupported.add("aud");
 		assertEquals(currenciesSupported, acc.getCurrenciesSupported());
 
+		assertEquals("company", acc.getLegalEntity().getType());
+		assertEquals("San Francisco", acc.getLegalEntity().getAddress().getCity());
+
 		assertEquals("site@stripe.com", acc.getEmail());
 		assertEquals(null, acc.getStatementDescriptor());
 		assertEquals("usd", acc.getDefaultCurrency());
 		assertEquals("US", acc.getCountry());
 		assertEquals("US/Pacific", acc.getTimezone());
 		assertEquals("Stripe.com", acc.getDisplayName());
+	}
+
+	@Test
+	public void testRetrieve() throws StripeException {
+		Account.retrieve();
+
+		verifyGet(Account.class, "https://api.stripe.com/v1/account");
+		verifyNoMoreInteractions(networkMock);
 	}
 
 	@Test
@@ -81,6 +95,22 @@ public class AccountTest extends BaseStripeTest {
 		Account.retrieve("acct_something", null);
 
 		verifyGet(Account.class, "https://api.stripe.com/v1/accounts/acct_something");
+		verifyNoMoreInteractions(networkMock);
+	}
+
+	@Test
+	public void testAccountUpdateById() throws StripeException {
+		stubNetwork(Account.class, accountHash);
+		Account acc = Account.retrieve("acct_1032D82eZvKYlo2C");
+		verifyGet(Account.class, "https://api.stripe.com/v1/accounts/acct_1032D82eZvKYlo2C");
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> legalEntity = new HashMap<String, Object>();
+		legalEntity.put("type", "individual");
+		params.put("legal_entity", legalEntity);
+		acc.update(params);
+
+		verifyPost(Account.class, "https://api.stripe.com/v1/accounts/acct_1032D82eZvKYlo2C", params);
 		verifyNoMoreInteractions(networkMock);
 	}
 }
