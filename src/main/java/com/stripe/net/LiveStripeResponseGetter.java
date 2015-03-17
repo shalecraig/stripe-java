@@ -25,6 +25,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -241,17 +242,25 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
 		if (params == null) {
 			return new HashMap<String, String>();
 		}
-		Map<String, String> flatParams = new HashMap<String, String>();
+		Map<String, String> flatParams = new LinkedHashMap<String, String>();
 		for (Map.Entry<String, Object> entry : params.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
 			if (value instanceof Map<?, ?>) {
-				Map<String, Object> flatNestedMap = new HashMap<String, Object>();
+				Map<String, Object> flatNestedMap = new LinkedHashMap<String, Object>();
 				Map<?, ?> nestedMap = (Map<?, ?>) value;
 				for (Map.Entry<?, ?> nestedEntry : nestedMap.entrySet()) {
 					flatNestedMap.put(
 							String.format("%s[%s]", key, nestedEntry.getKey()),
 							nestedEntry.getValue());
+				}
+				flatParams.putAll(flattenParams(flatNestedMap));
+			} else if (value instanceof List<?>) {
+				Map<String, Object> flatNestedMap = new LinkedHashMap<String, Object>();
+				int index = 0;
+				for (Object element : (List<?>) value) {
+					flatNestedMap.put(String.format("%s[%s]", key, index), element);
+					index += 1;
 				}
 				flatParams.putAll(flattenParams(flatNestedMap));
 			} else if ("".equals(value)) {
