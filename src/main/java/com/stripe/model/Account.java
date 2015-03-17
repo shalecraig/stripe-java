@@ -9,6 +9,7 @@ import com.stripe.net.APIResource;
 import com.stripe.net.RequestOptions;
 
 import java.util.List;
+import java.util.Map;
 
 public class Account extends APIResource {
 	String id;
@@ -22,6 +23,7 @@ public class Account extends APIResource {
 	String country;
 	String timezone;
 	String displayName;
+	Map<String, Object> verification;
 
 	public String getId() {
 		return id;
@@ -65,6 +67,10 @@ public class Account extends APIResource {
 
 	public String getDisplayName() {
 		return displayName;
+	}
+
+	public Map<String, Object> getVerification() {
+		return verification;
 	}
 
 	public static Account retrieve()

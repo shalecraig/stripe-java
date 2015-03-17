@@ -16,25 +16,33 @@ import static org.mockito.Mockito.*;
 public class AccountTest extends BaseStripeTest {
 	static String accountResponse =
 		"{" +
-		"\"id\": \"acct_1032D82eZvKYlo2C\"," +
-		"\"email\": \"site@stripe.com\"," +
-		"\"statement_descriptor\": null," +
-		"\"display_name\": \"Stripe.com\"," +
-		"\"timezone\": \"US/Pacific\"," +
-		"\"details_submitted\": false," +
-		"\"charges_enabled\": false," +
-		"\"transfers_enabled\": false," +
-		"\"currencies_supported\": [" +
-		"	\"usd\"," +
-		"	\"aud\"" +
-		"]," +
-		"\"default_currency\": \"usd\"," +
-		"\"country\": \"US\"," +
-		"\"object\": \"account\"," +
-		"\"business_name\": \"Stripe.com\"," +
-		"\"business_url\": null," +
-		"\"support_phone\": null," +
-		"\"managed\": null" +
+		"  \"id\": \"acct_1032D82eZvKYlo2C\"," +
+		"  \"email\": \"site@stripe.com\"," +
+		"  \"statement_descriptor\": null," +
+		"  \"display_name\": \"Stripe.com\"," +
+		"  \"timezone\": \"US/Pacific\"," +
+		"  \"details_submitted\": false," +
+		"  \"charges_enabled\": false," +
+		"  \"transfers_enabled\": false," +
+		"  \"currencies_supported\": [" +
+		"  	\"usd\"," +
+		"  	\"aud\"" +
+		"  ]," +
+		"  \"default_currency\": \"usd\"," +
+		"  \"country\": \"US\"," +
+		"  \"object\": \"account\"," +
+		"  \"business_name\": \"Stripe.com\"," +
+		"  \"business_url\": null," +
+		"  \"support_phone\": null," +
+		"  \"managed\": null," +
+		"  \"verification\": {" +
+		"    \"fields_needed\": [" +
+		"      \"foo\"," +
+		"      \"bar\"" +
+		"    ]," +
+		"    \"due_by\": 123," +
+		"    \"contacted\": false" +
+    "  }" +
 		"}";
 
 	@Test
@@ -61,6 +69,17 @@ public class AccountTest extends BaseStripeTest {
 		assertEquals("US", acc.getCountry());
 		assertEquals("US/Pacific", acc.getTimezone());
 		assertEquals("Stripe.com", acc.getDisplayName());
+
+		Map<String, Object> verification = new HashMap<String, Object>();
+		List<String> fieldsNeeded = new LinkedList<String>();
+		fieldsNeeded.add("foo");
+		fieldsNeeded.add("bar");
+		verification.put("fields_needed", fieldsNeeded);
+		/* 123 is a float due to GSON decoding */
+		verification.put("due_by", 123.0);
+		verification.put("contacted", false);
+
+		assertEquals(verification, acc.getVerification());
 	}
 
 	@Test
