@@ -25,6 +25,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -257,10 +258,9 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
 				flatParams.putAll(flattenParams(flatNestedMap));
 			} else if (value instanceof List<?>) {
 				Map<String, Object> flatNestedMap = new LinkedHashMap<String, Object>();
-				int index = 0;
-				for (Object element : (List<?>) value) {
-					flatNestedMap.put(String.format("%s[%s]", key, index), element);
-					index += 1;
+				Iterator<?> it = ((List<?>)value).iterator();
+				for (int index = 0; it.hasNext(); ++index) {
+					flatNestedMap.put(String.format("%s[%s]", key, index), it.next());
 				}
 				flatParams.putAll(flattenParams(flatNestedMap));
 			} else if ("".equals(value)) {
