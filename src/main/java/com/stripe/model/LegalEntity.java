@@ -11,18 +11,14 @@ import com.stripe.net.RequestOptions;
 import java.util.List;
 import java.util.Map;
 
-public class LegalEntity extends APIResource {
+public class LegalEntity extends StripeObject {
 	String type;
 	Address address;
 	String businessName;
-	String businessTaxId;
-	String businessVatId;
 	DateOfBirth dob;
 	String firstName;
 	String lastName;
 	Address personalAddress;
-	String personalIdNumber;
-	String ssnLast4;
 	Verification verification;
 	List<Owner> additionalOwners;
 
@@ -34,12 +30,6 @@ public class LegalEntity extends APIResource {
 	}
 	public String getBusinessName() {
 		return businessName;
-	}
-	public String getBusinessTaxId() {
-		return businessTaxId;
-	}
-	public String getBusinessVatId() {
-		return businessVatId;
 	}
 	public DateOfBirth getDob() {
 		return dob;
@@ -53,12 +43,6 @@ public class LegalEntity extends APIResource {
 	public Address getPersonalAddress() {
 		return personalAddress;
 	}
-	public String getPersonalIdNumber() {
-		return personalIdNumber;
-	}
-	public String getSsnLast4() {
-		return ssnLast4;
-	}
 	public Verification getVerification() {
 		return verification;
 	}
@@ -66,35 +50,28 @@ public class LegalEntity extends APIResource {
 		return additionalOwners;
 	}
 
-	public static class Address extends APIResource {
-		String line1;
-		String line2;
-		String city;
-		String state;
-		String postalCode;
-		String country;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 
-		public String getLine1() {
-			return line1;
-		}
-		public String getLine2() {
-			return line2;
-		}
-		public String getCity() {
-			return city;
-		}
-		public String getState() {
-			return state;
-		}
-		public String getPostalCode() {
-			return postalCode;
-		}
-		public String getCountry() {
-			return country;
-		}
+		LegalEntity le = (LegalEntity) o;
+		return equals(type, le.type) &&
+			equals(address, le.address) &&
+			equals(businessName, le.businessName) &&
+			equals(dob, le.dob) &&
+			equals(firstName, le.firstName) &&
+			equals(lastName, le.lastName) &&
+			equals(personalAddress, le.personalAddress) &&
+			equals(verification, le.verification) &&
+			equals(additionalOwners, le.additionalOwners);
 	}
 
-	public static class DateOfBirth extends APIResource {
+	public static class DateOfBirth extends StripeObject {
 		Integer day;
 		Integer month;
 		Integer year;
@@ -108,27 +85,30 @@ public class LegalEntity extends APIResource {
 		public Integer getYear() {
 			return year;
 		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
+
+			DateOfBirth dob = (DateOfBirth) o;
+			return equals(day, dob.day) &&
+				equals(month, dob.month) &&
+				equals(year, dob.year);
+		}
 	}
 
-	public static class Verification extends APIResource {
+	public static class Verification extends StripeObject {
 		String status;
-		List<String> fieldsNeeded;
-		Long dueBy;
-		Boolean contacted;
 		String document;
 		String details;
 
 		public String getStatus() {
 			return status;
-		}
-		public List<String> getFieldsNeeded() {
-			return fieldsNeeded;
-		}
-		public Long getDueBy() {
-			return dueBy;
-		}
-		public Boolean getContacted() {
-			return contacted;
 		}
 		public String getDocument() {
 			return document;
@@ -136,9 +116,24 @@ public class LegalEntity extends APIResource {
 		public String getDetails() {
 			return details;
 		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
+
+			Verification verification = (Verification) o;
+			return equals(status, verification.status) &&
+				equals(document, verification.document) &&
+				equals(details, verification.details);
+		}
 	}
 
-	public static class Owner extends APIResource {
+	public static class Owner extends StripeObject {
 		Address address;
 		DateOfBirth dob;
 		String firstName;
@@ -159,6 +154,23 @@ public class LegalEntity extends APIResource {
 		}
 		public Verification getVerification() {
 			return verification;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
+
+			Owner owner = (Owner) o;
+			return equals(address, owner.address) &&
+				equals(dob, owner.dob) &&
+				equals(firstName, owner.firstName) &&
+				equals(lastName, owner.lastName) &&
+				equals(verification, owner.verification);
 		}
 	}
 }
