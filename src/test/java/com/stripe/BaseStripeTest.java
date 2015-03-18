@@ -3,7 +3,6 @@ package com.stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.net.APIResource;
 import com.stripe.net.RequestOptions;
-import com.stripe.net.RequestOptions.RequestOptionsBuilder;
 import com.stripe.net.StripeResponseGetter;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -19,10 +18,7 @@ import java.util.Map;
 import static org.mockito.Mockito.*;
 
 public class BaseStripeTest {
-	protected static Map<String, Object> defaultParams;
-	protected static RequestOptionsBuilder requestOptionsBuilder;
-
-	public static final StripeResponseGetter networkMock = mock(StripeResponseGetter.class);
+	public static StripeResponseGetter networkMock;
 
 	public static <T> void verifyGet(
 			Class<T> clazz,
@@ -166,13 +162,11 @@ public class BaseStripeTest {
 	@BeforeClass
 	public static void setUp() {
 		Stripe.apiKey = "foobar";
-		APIResource.setStripeResponseGetter(networkMock);
 	}
 
 	@Before
-	public void before() {
-		defaultParams = new HashMap<String, Object>();
-		requestOptionsBuilder = new RequestOptionsBuilder();
+	public void setUpMock() {
+		networkMock = mock(StripeResponseGetter.class);
 	}
 
 	protected String resource(String path) throws IOException {

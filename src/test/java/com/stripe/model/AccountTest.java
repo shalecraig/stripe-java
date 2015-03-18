@@ -4,7 +4,12 @@ import com.stripe.BaseStripeTest;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.net.APIResource;
+import com.stripe.net.LiveStripeResponseGetter;
+import com.stripe.net.RequestOptions.RequestOptionsBuilder;
 import com.stripe.net.RequestOptions;
+import org.junit.After;
+import org.junit.Before;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -17,6 +22,17 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class AccountTest extends BaseStripeTest {
+	@Before
+	public void mockStripeResponseGetter() {
+		APIResource.setStripeResponseGetter(networkMock);
+	}
+
+	@After
+	public void unmockStripeResponseGetter() {
+		/* This needs to be done because tests aren't isolated in Java */
+		APIResource.setStripeResponseGetter(new LiveStripeResponseGetter());
+	}
+
 	@Test
 	public void testDeserialize() throws StripeException, IOException {
 		String json = resource("account.json");
@@ -55,7 +71,7 @@ public class AccountTest extends BaseStripeTest {
 	public void testOverloadedSingleArgumentRetrieve() throws StripeException {
 		Account.retrieve("sk_foobar");
 
-		RequestOptions options = requestOptionsBuilder.setApiKey("sk_foobar").build();
+		RequestOptions options = (new RequestOptionsBuilder()).setApiKey("sk_foobar").build();
 		verifyGet(Account.class, "https://api.stripe.com/v1/account", options);
 
 		Account.retrieve("anything_else");
