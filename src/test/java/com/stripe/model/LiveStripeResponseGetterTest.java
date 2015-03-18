@@ -34,7 +34,7 @@ public class LiveStripeResponseGetterTest {
 
 	@Test
 	public void testCreateQueryWithNestedParams() throws StripeException, UnsupportedEncodingException {
-		/* Use TreeMap because it preserves iteration order */
+		/* Use LinkedHashMap because it preserves iteration order */
 		Map<String, Object> params = new LinkedHashMap<String, Object>();
 		Map<String, Object> nested = new LinkedHashMap<String, Object>();
 		nested.put("A", "B");
